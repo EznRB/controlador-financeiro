@@ -1,7 +1,8 @@
 "use client"
 import { motion } from "framer-motion"
 import CountUp from '@/components/CountUp'
-import { Wallet, TrendingUp, TrendingDown } from 'lucide-react'
+import { Wallet, TrendingUp, TrendingDown, CheckCircle2 } from 'lucide-react'
+import { useMemo, useState } from 'react'
 
 const tx = [
   { d: 'Compra Mercado', v: -120 },
@@ -34,7 +35,18 @@ function Sparkline() {
 }
 
 export default function PreviewShowcase() {
-  const fmt = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
+  const fmt = useMemo(() => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }), [])
+  const [steps, setSteps] = useState([
+    { k: 'tx', label: 'Registrar 1ª transação', done: false },
+    { k: 'goal', label: 'Criar 1 meta', done: false },
+    { k: 'rec', label: 'Configurar 1 recorrência', done: false },
+  ])
+  const completed = steps.filter((s) => s.done).length
+  const pct = Math.round((completed / steps.length) * 100)
+  const toggle = (k: string) => {
+    setSteps((prev) => prev.map((s) => s.k === k ? { ...s, done: !s.done } : s))
+    try { (window as any).plausible?.('lp_preview_step', { props: { key: k } }) } catch {}
+  }
   return (
     <section id="preview" className="mx-auto max-w-6xl px-4 py-12">
       <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="rounded-2xl border border-slate-200 dark:border-slate-700 p-6 bg-white/75 dark:bg-slate-900/60 backdrop-blur">
@@ -80,7 +92,28 @@ export default function PreviewShowcase() {
             </div>
           ))}
         </div>
-        <div className="mt-4 text-center text-slate-500">Recursos completos no teste grátis</div>
+        <div className="mt-6 rounded-xl border border-slate-200 dark:border-slate-700 p-4 bg-white/75 dark:bg-slate-900/60">
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-slate-700 dark:text-slate-200">Experiência rápida</div>
+            <div className="w-40 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+              <div className="h-full bg-emerald-500" style={{ width: `${pct}%` }} />
+            </div>
+          </div>
+          <div className="mt-3 grid md:grid-cols-3 gap-2">
+            {steps.map((s) => (
+              <button key={s.k} onClick={() => toggle(s.k)} className={`flex items-center justify-between w-full rounded-lg border p-3 text-left ${s.done ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30' : 'border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900/50'}`}>
+                <span className={`${s.done ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-900 dark:text-white'}`}>{s.label}</span>
+                <CheckCircle2 className={`h-5 w-5 ${s.done ? 'text-emerald-600' : 'text-slate-400'}`} />
+              </button>
+            ))}
+          </div>
+          <div className="mt-4 flex justify-center">
+            <a href="/checkout?plan=monthly" onClick={() => { try { (window as any).plausible?.('click_cta', { props: { plan: 'monthly', from: 'preview' } }) } catch {} }} className={`rounded-xl px-6 py-3 text-white transition-colors shadow ${completed >= 2 ? 'bg-slate-900 hover:bg-slate-700' : 'bg-slate-500 cursor-pointer'}`}>
+              {completed >= 2 ? 'Começar teste grátis' : 'Complete 2 passos para iniciar o teste'}
+            </a>
+          </div>
+          <div className="mt-2 text-center text-slate-600 dark:text-slate-300">Recursos completos no teste grátis</div>
+        </div>
       </motion.div>
     </section>
   )
