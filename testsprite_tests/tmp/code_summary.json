@@ -1,0 +1,96 @@
+{
+  "tech_stack": [
+    "TypeScript",
+    "Next.js 16 (App Router)",
+    "Supabase (Auth, PostgreSQL, Storage)",
+    "Tailwind CSS 4",
+    "PWA (next-pwa, Workbox)",
+    "Recharts",
+    "Lucide React"
+  ],
+  "features": [
+    {
+      "name": "Autenticação com Magic Link",
+      "description": "Fluxo de login e callback usando Supabase Auth; redirecionamentos via middleware.",
+      "files": [
+        "src/app/auth/login/page.tsx",
+        "src/app/auth/callback/page.tsx",
+        "src/middleware.ts",
+        "src/lib/supabase.ts"
+      ]
+    },
+    {
+      "name": "Dashboard Financeiro",
+      "description": "Resumo de saldo, entradas/saídas recentes e gráficos (Recharts).",
+      "files": [
+        "src/app/dashboard/page.tsx",
+        "src/components/Navigation.tsx"
+      ]
+    },
+    {
+      "name": "Transações",
+      "description": "Listagem, criação e exclusão de transações financeiras.",
+      "files": [
+        "src/app/transactions/page.tsx",
+        "src/app/transactions/new/page.tsx",
+        "supabase/migrations/202411120001_initial_schema.sql"
+      ]
+    },
+    {
+      "name": "Despesas Recorrentes",
+      "description": "Configuração, processamento automático e API de processamento programado.",
+      "files": [
+        "src/lib/recurring-expenses.ts",
+        "src/app/recurring/page.tsx",
+        "src/app/recurring/new/page.tsx",
+        "src/app/api/recurring/process/route.ts",
+        "supabase/migrations/202411120002_add_recurring_expenses.sql"
+      ]
+    },
+    {
+      "name": "Importação de CSV",
+      "description": "Upload de extratos bancários CSV, prévia e importação em lote com categorização automática.",
+      "files": [
+        "src/lib/csv-import.ts",
+        "src/app/import-csv/page.tsx",
+        "src/app/api/csv/import/route.ts"
+      ]
+    },
+    {
+      "name": "OCR de Notas",
+      "description": "Utilitário simulado para OCR de notas fiscais e extração de valor e data.",
+      "files": [
+        "src/app/scan-receipt/page.tsx",
+        "src/lib/ocr.ts"
+      ]
+    },
+    {
+      "name": "Metas Financeiras (placeholder)",
+      "description": "Páginas base para futuras metas financeiras.",
+      "files": [
+        "src/app/goals/page.tsx",
+        "src/app/goals/new/page.tsx"
+      ]
+    },
+    {
+      "name": "PWA",
+      "description": "Manifesto, ícones e configuração de PWA com Workbox.",
+      "files": [
+        "public/manifest.json",
+        "public/icon-192x192.png",
+        "public/icon-512x512.png",
+        "next.config.js",
+        "next.config.ts"
+      ]
+    },
+    {
+      "name": "Supabase Schema e Seed",
+      "description": "DDL das tabelas principais, índices, RLS e dados de seed.",
+      "files": [
+        "supabase/migrations/202411120001_initial_schema.sql",
+        "supabase/migrations/202411120002_add_recurring_expenses.sql",
+        "supabase/seed.sql"
+      ]
+    }
+  ]
+}

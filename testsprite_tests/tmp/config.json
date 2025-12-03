@@ -1,0 +1,17 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:3000",
+  "loginUser": "teste",
+  "loginPassword": "teste",
+  "executionArgs": {
+    "projectName": "organizador-financeiro",
+    "projectPath": "c:\\Users\\Enzo Marcelo\\Desktop\\testes SOLO TRAE\\organizador financeiro\\organizador-financeiro",
+    "testIds": [],
+    "additionalInstruction": "Executar testes de navegação sem login; validar renderização de /import-csv e preview ao carregar CSV de exemplo; checar chamada a /api/csv/import retorna erro amigável quando não autenticado.",
+    "envs": {
+      "API_KEY": "sk-user-Ynrd3TGW6lEFPFfMgK4SoPizRhEhiMtsR4hxsNutcbsk_O8FPBacicFK-3OnenuqwL2DnWts96pdq3jyjupVTH9FTzABLT56-YOrt3DXJEvdJEdKF5alRKjb8BBNivE4aGY"
+    }
+  }
+}

@@ -1,0 +1,489 @@
+[
+  {
+    "id": "TC001",
+    "title": "Successful login via Magic Link",
+    "description": "Verify that a user can log in successfully by requesting a magic link via email and accessing the app through that link.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page"
+      },
+      {
+        "type": "action",
+        "description": "Enter a registered email address"
+      },
+      {
+        "type": "action",
+        "description": "Click the 'Send Magic Link' button"
+      },
+      {
+        "type": "assertion",
+        "description": "Check that a confirmation message is displayed indicating that the magic link has been sent"
+      },
+      {
+        "type": "action",
+        "description": "Open the received email and click the magic link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user is redirected to the app and authenticated successfully"
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Login failure with unregistered email",
+    "description": "Ensure that attempting to request a magic link with an unrecognized email shows appropriate error feedback.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page"
+      },
+      {
+        "type": "action",
+        "description": "Enter an unregistered or invalid email address"
+      },
+      {
+        "type": "action",
+        "description": "Click the 'Send Magic Link' button"
+      },
+      {
+        "type": "assertion",
+        "description": "Check that an error message is shown indicating the email is not recognized"
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Dashboard displays current balance and recent transactions",
+    "description": "Verify the dashboard loads within 2 seconds and displays a correct summary of the current financial status with clear graphs and last transaction list.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login successfully via magic link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the dashboard page loads within 2 seconds"
+      },
+      {
+        "type": "assertion",
+        "description": "Check that current balance is displayed correctly"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify graphical trend charts are rendered and accurately reflect transactions"
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm the latest transactions list shows recent entries with correct data"
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Create a new income transaction quickly",
+    "description": "Verify that recording a new gain transaction can be completed in less than 10 seconds with no more than 3 clicks.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Access the 'New Transaction' form from the dashboard"
+      },
+      {
+        "type": "action",
+        "description": "Select 'Gain' as transaction type"
+      },
+      {
+        "type": "action",
+        "description": "Input valid amount and select category quickly using the numeric keypad and quick selection"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm the transaction is recorded and appears on the dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify total steps and time taken is within allowed limits (max 3 clicks, under 10 seconds)"
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Prevent negative or invalid values in transaction form",
+    "description": "Ensure the transaction form validates inputs to block negative amounts and invalid dates before submission.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open the 'New Transaction' form"
+      },
+      {
+        "type": "action",
+        "description": "Enter negative number in amount field"
+      },
+      {
+        "type": "assertion",
+        "description": "Check that input validation rejects the negative value and shows error feedback"
+      },
+      {
+        "type": "action",
+        "description": "Enter an invalid date format"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the date field validation prevents submission and displays an error"
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "List, filter, edit and delete transactions",
+    "description": "Validate full management of transaction list including filtering by category and date, editing entries, and deleting transactions.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the transactions list page"
+      },
+      {
+        "type": "assertion",
+        "description": "Check all transactions are listed with correct details"
+      },
+      {
+        "type": "action",
+        "description": "Apply filters by category and date range"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify filtered list matches criteria"
+      },
+      {
+        "type": "action",
+        "description": "Select a transaction and edit its details"
+      },
+      {
+        "type": "action",
+        "description": "Save updated transaction"
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm changes are persisted and reflected in the list and dashboard"
+      },
+      {
+        "type": "action",
+        "description": "Delete a transaction"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the transaction is removed and balance updates accordingly"
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Import CSV with preview and automatic categorization",
+    "description": "Test the import process for CSV bank statements with up to 1000 lines, including file upload, preview of parsed data, mapping fields and confirmation of import.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the CSV import page"
+      },
+      {
+        "type": "action",
+        "description": "Upload a valid CSV file with up to 1000 lines"
+      },
+      {
+        "type": "assertion",
+        "description": "Check that data preview renders correctly with parsed fields"
+      },
+      {
+        "type": "action",
+        "description": "Map CSV columns to app categories if required"
+      },
+      {
+        "type": "action",
+        "description": "Confirm import of transactions"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that transactions are correctly added and categorized in the system"
+      },
+      {
+        "type": "assertion",
+        "description": "Ensure import process completes in under 30 seconds"
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "OCR extraction of receipt details with review and edit",
+    "description": "Validate the functionality of scanning or uploading receipts to extract value and date via OCR with at least 80% correctness, and allow user to edit extracted info before saving.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the receipt scanning page"
+      },
+      {
+        "type": "action",
+        "description": "Upload an image of a receipt or capture via camera"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify OCR extracts value and date fields"
+      },
+      {
+        "type": "action",
+        "description": "Edit extracted fields if necessary"
+      },
+      {
+        "type": "action",
+        "description": "Save the receipt as a transaction"
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm the transaction is correctly saved with user-reviewed data"
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Offline usage with synchronization on reconnect",
+    "description": "Ensure the PWA supports offline basic functionality, allowing transactions registration offline and synchronizing data automatically when internet is restored.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Install the PWA on smartphone"
+      },
+      {
+        "type": "action",
+        "description": "Put device into offline mode"
+      },
+      {
+        "type": "action",
+        "description": "Open app and register new gain and expense transactions"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify transactions are accepted and stored locally without errors"
+      },
+      {
+        "type": "action",
+        "description": "Reconnect device to internet"
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm stored offline transactions synchronize with backend and appear in dashboard"
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Profile and categories customization",
+    "description": "Verify users can edit profile data, create and remove categories with custom icons and colors, and that changes reflect correctly in transaction forms.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to user settings"
+      },
+      {
+        "type": "action",
+        "description": "Edit profile information such as name and email"
+      },
+      {
+        "type": "assertion",
+        "description": "Check changes are saved and persisted after reload"
+      },
+      {
+        "type": "action",
+        "description": "Manage categories: add a new category with icon and color"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify new category appears in transaction forms"
+      },
+      {
+        "type": "action",
+        "description": "Delete an existing category"
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm category removal and absent in future transaction entries"
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Export data as CSV and Excel compatible files",
+    "description": "Test exporting financial data to CSV or Excel format and verify the compatibility and correctness of exported files.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Access data export option in settings"
+      },
+      {
+        "type": "action",
+        "description": "Select export format (CSV or Excel)"
+      },
+      {
+        "type": "action",
+        "description": "Download exported file"
+      },
+      {
+        "type": "assertion",
+        "description": "Open exported file in Excel or compatible software and verify all data fields are correct and no data loss occurred"
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Verification of UI usability and accessibility on mobile",
+    "description": "Ensure that the entire interface is in Portuguese BR, with familiar terms and minimum 48px touch areas for all actionable buttons on smartphones.",
+    "category": "ui",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Use the app on a smartphone device"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify all text is in Portuguese BR with familiar terminology"
+      },
+      {
+        "type": "assertion",
+        "description": "Check all interactive buttons have minimum touch area of 48px"
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm readable font sizes and comfortable layout for finger navigation"
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Confirm security of stored data and session duration",
+    "description": "Validate that user data is stored securely with encryption and automatic backup, and that authentication sessions remain valid up to 30 days.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login and use the app normally"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify database records are encrypted and backed up automatically"
+      },
+      {
+        "type": "action",
+        "description": "Remain idle or close and reopen app multiple times within 30 days"
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm user session persists and does not require frequent re-login during 30-day period"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to access data without proper session"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify Row Level Security policies block unauthorized access"
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Verify PWA installation, splash screen, and offline start",
+    "description": "Ensure the app is installable as a PWA, shows customized splash screen and icons, and allows startup offline.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Access the app in supported browser"
+      },
+      {
+        "type": "action",
+        "description": "Trigger 'Install App' prompt and install the PWA"
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm app installs and icon appears on home screen"
+      },
+      {
+        "type": "action",
+        "description": "Restart app and observe splash screen animation and custom icons"
+      },
+      {
+        "type": "action",
+        "description": "Launch app without internet connection"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify app launches offline and allows basic usage"
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Automatic processing of recurring expenses",
+    "description": "Validate the setting up, scheduled automatic processing and API execution of recurring expenses entries.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to recurring expenses management page"
+      },
+      {
+        "type": "action",
+        "description": "Create a new recurring expense with defined frequency and amount"
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm the recurring expense is saved correctly"
+      },
+      {
+        "type": "action",
+        "description": "Trigger or wait for scheduled processing API to run"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify proper transactions are generated automatically on expected dates"
+      },
+      {
+        "type": "action",
+        "description": "Edit or delete recurring expense"
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm changes reflect accordingly on future processing"
+      }
+    ]
+  }
+]

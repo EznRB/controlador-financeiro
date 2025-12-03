@@ -1,0 +1,21 @@
+export const cryptoSymbols: Array<{ symbol: string; name: string }> = [
+  { symbol: 'BTC', name: 'Bitcoin' },
+  { symbol: 'ETH', name: 'Ethereum' },
+  { symbol: 'SOL', name: 'Solana' },
+  { symbol: 'ADA', name: 'Cardano' },
+  { symbol: 'AVAX', name: 'Avalanche' },
+  { symbol: 'BNB', name: 'BNB' },
+  { symbol: 'XRP', name: 'XRP' },
+  { symbol: 'DOGE', name: 'Dogecoin' },
+  { symbol: 'LTC', name: 'Litecoin' },
+  { symbol: 'DOT', name: 'Polkadot' },
+  { symbol: 'MATIC', name: 'Polygon' },
+  { symbol: 'LINK', name: 'Chainlink' },
+  { symbol: 'TRX', name: 'TRON' },
+  { symbol: 'ATOM', name: 'Cosmos' },
+  { symbol: 'NEAR', name: 'Near' },
+  { symbol: 'UNI', name: 'Uniswap' },
+  { symbol: 'TON', name: 'Toncoin' },
+  { symbol: 'SHIB', name: 'Shiba Inu' },
+]
+

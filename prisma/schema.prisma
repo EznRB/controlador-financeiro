@@ -1,0 +1,187 @@
+// Prisma schema for Neon Postgres
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TransactionType {
+  income
+  expense
+}
+
+enum RecurringFrequency {
+  weekly
+  monthly
+}
+
+model User {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  name        String?
+  preferences Json?    @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @map("updated_at")
+
+  // Stripe billing
+  stripeCustomerId    String?
+  stripeSubscriptionId String?
+  subscriptionStatus  String?  @default("free")
+  plan                String?  @default("free")
+  trialEndAt          DateTime?
+  lifetimePaidAt      DateTime?
+  role                String    @default("user")
+  referralCode        String?   @unique
+  referredById        String?
+  referredBy          User?     @relation("UserReferrals", fields: [referredById], references: [id])
+  referredUsers       User[]    @relation("UserReferrals")
+
+  transactions Transaction[]
+  goals        Goal[]
+  categories   Category[]
+  recurring    RecurringExpense[]
+  cryptoHoldings     CryptoHolding[]
+  cryptoTransactions CryptoTransaction[]
+  paymentEvents     PaymentEvent[]
+  referralsAsReferrer Referral[] @relation("ReferralReferrer")
+  referralsAsReferee  Referral[] @relation("ReferralReferee")
+}
+
+model Transaction {
+  id              String          @id @default(uuid())
+  userId          String          @map("user_id")
+  user            User            @relation(fields: [userId], references: [id])
+  amount          Decimal         @db.Decimal(10, 2)
+  type            TransactionType
+  category        String
+  description     String?
+  transactionDate DateTime        @map("transaction_date")
+  source          String?         @default("manual")
+  metadata        Json?           @default("{}")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @default(now()) @map("updated_at")
+
+  @@index([userId])
+  @@index([transactionDate])
+  @@index([type])
+  @@index([category])
+}
+
+model Goal {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  user          User     @relation(fields: [userId], references: [id])
+  title         String
+  targetAmount  Decimal  @db.Decimal(10, 2)
+  currentAmount Decimal  @db.Decimal(10, 2) @default(0)
+  category      String
+  startDate     DateTime @map("start_date")
+  endDate       DateTime @map("end_date")
+  isActive      Boolean  @default(true) @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([isActive])
+  @@index([startDate, endDate])
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  userId    String?  @map("user_id")
+  user      User?    @relation(fields: [userId], references: [id])
+  name      String
+  icon      String   @default("📊")
+  color     String   @default("#3B82F6")
+  isDefault Boolean  @default(false) @map("is_default")
+  type      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+}
+
+model RecurringExpense {
+  id            String             @id @default(uuid())
+  userId        String             @map("user_id")
+  user          User               @relation(fields: [userId], references: [id])
+  title         String
+  amount        Decimal            @db.Decimal(10, 2)
+  category      String
+  description   String?
+  frequency     RecurringFrequency
+  startDate     DateTime           @map("start_date")
+  lastProcessed DateTime?          @map("last_processed")
+  isActive      Boolean            @default(true) @map("is_active")
+  createdAt     DateTime           @default(now()) @map("created_at")
+  updatedAt     DateTime           @default(now()) @map("updated_at")
+
+  @@index([userId])
+  @@index([isActive])
+  @@index([frequency])
+}
+
+model CryptoHolding {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id])
+  symbol    String
+  amount    Decimal  @db.Decimal(20, 8)
+  avgPrice  Decimal  @db.Decimal(20, 8) @map("avg_price")
+  targetValue Decimal? @db.Decimal(20, 2) @map("target_value")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@index([userId])
+  @@index([symbol])
+}
+
+enum TradeType {
+  BUY
+  SELL
+}
+
+model CryptoTransaction {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id])
+  symbol    String
+  type      TradeType
+  quantity  Decimal  @db.Decimal(20, 8)
+  price     Decimal  @db.Decimal(20, 8)
+  fee       Decimal? @db.Decimal(20, 8)
+  date      DateTime
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([symbol])
+  @@index([date])
+}
+
+model PaymentEvent {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  type      String
+  data      Json
+  utmSource String?
+  utmMedium String?
+  utmCampaign String?
+  utmContent String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([type])
+}
+
+model Referral {
+  id         String   @id @default(uuid())
+  referrerId String   @map("referrer_id")
+  referrer   User     @relation("ReferralReferrer", fields: [referrerId], references: [id])
+  refereeId  String?  @map("referee_id")
+  referee    User?    @relation("ReferralReferee", fields: [refereeId], references: [id])
+  email      String?
+  status     String   @default("pending")
+  createdAt  DateTime @default(now()) @map("created_at")
+}
