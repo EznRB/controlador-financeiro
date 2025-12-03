@@ -11,9 +11,9 @@ export default function FeatureGrid() {
   return (
     <section className="mx-auto max-w-6xl px-4 grid md:grid-cols-3 gap-6">
       {items.map((c, i) => (
-        <div key={i} className="rounded-xl border border-slate-200 dark:border-slate-800 p-6 bg-white/80 dark:bg-slate-900/50 backdrop-blur">
+        <div key={i} className="rounded-xl border border-slate-200 dark:border-slate-700 p-6 bg-white/80 dark:bg-slate-900/60 backdrop-blur">
           <h3 className="text-xl font-semibold text-slate-900 dark:text-white">{c.t}</h3>
-          <p className="mt-2 text-slate-600 dark:text-slate-300">{c.d}</p>
+          <p className="mt-2 text-slate-700 dark:text-slate-200">{c.d}</p>
         </div>
       ))}
     </section>

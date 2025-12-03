@@ -37,14 +37,14 @@ export default function PreviewShowcase() {
   const fmt = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
   return (
     <section id="preview" className="mx-auto max-w-6xl px-4 py-12">
-      <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="rounded-2xl border border-slate-200 dark:border-slate-800 p-6 bg-white/70 dark:bg-slate-900/50 backdrop-blur">
+      <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="rounded-2xl border border-slate-200 dark:border-slate-700 p-6 bg-white/75 dark:bg-slate-900/60 backdrop-blur">
         <div className="grid md:grid-cols-3 gap-4">
           <div className="flex items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-800 p-4">
             <div className="p-2 rounded-lg bg-teal-500/10">
               <Wallet className="h-5 w-5 text-teal-600" />
             </div>
             <div>
-              <div className="text-sm text-slate-500">Saldo Atual</div>
+              <div className="text-sm text-slate-600 dark:text-slate-300">Saldo Atual</div>
               <div className="text-2xl font-bold text-teal-700 dark:text-teal-400">{fmt.format(2450)}</div>
             </div>
           </div>
@@ -53,7 +53,7 @@ export default function PreviewShowcase() {
               <TrendingUp className="h-5 w-5 text-emerald-600" />
             </div>
             <div>
-              <div className="text-sm text-slate-500">Ganhos do Período</div>
+              <div className="text-sm text-slate-600 dark:text-slate-300">Ganhos do Período</div>
               <div className="text-2xl font-bold text-emerald-600">{fmt.format(3120)}</div>
             </div>
           </div>
@@ -62,7 +62,7 @@ export default function PreviewShowcase() {
               <TrendingDown className="h-5 w-5 text-red-600" />
             </div>
             <div>
-              <div className="text-sm text-slate-500">Despesas do Período</div>
+              <div className="text-sm text-slate-600 dark:text-slate-300">Despesas do Período</div>
               <div className="text-2xl font-bold text-red-600">{fmt.format(670)}</div>
             </div>
           </div>
@@ -72,8 +72,8 @@ export default function PreviewShowcase() {
         </div>
         <div className="mt-6 space-y-3">
           {tx.map((t, i) => (
-            <div key={i} className="flex justify-between items-center rounded-lg border border-slate-200 dark:border-slate-800 p-3 bg-white/60 dark:bg-slate-900/40">
-              <div className="text-slate-800 dark:text-slate-200">{t.d}</div>
+            <div key={i} className="flex justify-between items-center rounded-lg border border-slate-200 dark:border-slate-700 p-3 bg-white/70 dark:bg-slate-900/50">
+              <div className="text-slate-900 dark:text-white">{t.d}</div>
               <div className={t.v > 0 ? 'text-emerald-600' : 'text-red-600'}>
                 {t.v > 0 ? '+' : '-'}{fmt.format(Math.abs(t.v))}
               </div>

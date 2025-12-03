@@ -10,9 +10,9 @@ export default function FAQSection() {
       <h2 className="text-2xl font-bold text-slate-900 dark:text-white text-center">Perguntas frequentes</h2>
       <div className="mt-6 space-y-3">
         {faqs.map((f, i) => (
-          <div key={i} className="rounded-xl border border-slate-200 dark:border-slate-800 p-4">
+          <div key={i} className="rounded-xl border border-slate-200 dark:border-slate-700 p-4 bg-white/75 dark:bg-slate-900/60 backdrop-blur">
             <div className="text-lg font-semibold text-slate-900 dark:text-white">{f.q}</div>
-            <div className="mt-2 text-slate-600 dark:text-slate-300">{f.a}</div>
+            <div className="mt-2 text-slate-700 dark:text-slate-200">{f.a}</div>
           </div>
         ))}
       </div>
