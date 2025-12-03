@@ -32,7 +32,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         {!hideNav && sidebarOpen && <DesktopSidebar />}
         <div className="flex-1">
           {!hideNav && user && (
-            <div className="mx-4 mt-4 rounded-lg border border-slate-200 dark:border-slate-800 p-3 text-sm text-slate-700 dark:text-slate-300">
+            <div className="mx-4 mt-2 text-xs md:text-sm text-slate-500 dark:text-slate-400">
               {user.plan === 'monthly' && (
                 <span>
                   Assinatura ativa • Status: {user.subscriptionStatus}
@@ -44,7 +44,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 <span>Acesso vitalício ativo</span>
               )}
               {user.plan === 'free' && (
-                <span>Plano gratuito • Experimente o plano completo por 30 dias em <a className="underline" href="/pricing">Pricing</a></span>
+                <span>Plano gratuito • Experimente o plano completo por 30 dias em <a className="underline hover:text-slate-600 dark:hover:text-slate-300" href="/pricing">Pricing</a></span>
               )}
               {user.plan === 'monthly' && user.subscriptionStatus === 'trialing' && user.trialEndAt && (
                 <span className="ml-2">Em teste até {new Date(user.trialEndAt).toLocaleDateString()}</span>
