@@ -12,7 +12,7 @@ const tx = [
 
 const spark = [10, 18, 14, 22, 28, 21, 30, 26, 34, 40]
 
-function Sparkline() {
+const Sparkline: React.FC = () => {
   const w = 360, h = 90, pad = 6
   const max = Math.max(...spark), min = Math.min(...spark)
   const xStep = (w - pad * 2) / (spark.length - 1)
@@ -22,15 +22,15 @@ function Sparkline() {
     return `${x},${yy}`
   }).join(' ')
   return (
-    <svg width={w} height={h} className="rounded-xl">
+    <motion.svg width={w} height={h} className="rounded-xl">
       <defs>
         <linearGradient id="grad" x1="0" x2="1" y1="0" y2="0">
           <stop offset="0%" stopColor="#10b981" />
           <stop offset="100%" stopColor="#14b8a6" />
         </linearGradient>
       </defs>
-      <polyline points={pts} fill="none" stroke="url(#grad)" strokeWidth="4" strokeLinecap="round" />
-    </svg>
+      <motion.polyline points={pts} fill="none" stroke="url(#grad)" strokeWidth="4" strokeLinecap="round" strokeDasharray="600" strokeDashoffset="600" animate={{ strokeDashoffset: 0 }} transition={{ duration: 1.2, ease: 'easeOut' }} />
+    </motion.svg>
   )
 }
 
