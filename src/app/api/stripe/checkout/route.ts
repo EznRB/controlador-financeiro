@@ -46,7 +46,7 @@ export async function POST(req: Request) {
           quantity: 1,
         },
       ],
-      payment_method_types: process.env.STRIPE_ENABLE_PIX === 'true' ? ['card','pix'] as any : undefined,
+      // Não forçar Pix no Checkout; usa métodos disponíveis na conta automaticamente
       allow_promotion_codes: true,
       subscription_data: isMonthly ? { trial_period_days: 30 } : undefined,
       customer_email: customerEmail,
