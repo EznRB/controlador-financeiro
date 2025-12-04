@@ -65,10 +65,14 @@ nextConfig.headers = async () => {
   const csp = isProd
     ? "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none';" +
       "img-src 'self' data: https:; style-src 'self' 'unsafe-inline';" +
-      "script-src 'self'; connect-src 'self' https://api.binance.com https://api.coingecko.com https://api.exchangerate.host"
+      "script-src 'self' https://js.stripe.com;" +
+      "connect-src 'self' https://api.binance.com https://api.coingecko.com https://api.exchangerate.host https://api.stripe.com;" +
+      "frame-src 'self' https://js.stripe.com"
     : "default-src 'self'; base-uri 'self'; object-src 'none';" +
       "img-src 'self' data: https:; style-src 'self' 'unsafe-inline';" +
-      "script-src 'self' 'unsafe-eval' 'unsafe-inline'; connect-src 'self' ws: http: https:; frame-ancestors 'self'";
+      "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com;" +
+      "connect-src 'self' ws: http: https: https://api.stripe.com; frame-ancestors 'self';" +
+      "frame-src 'self' https://js.stripe.com";
   return [
     {
       source: '/:path*',

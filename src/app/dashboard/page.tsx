@@ -67,7 +67,6 @@ function StatCard({ title, value, icon: Icon, trend, color, trendText }: {
             </div>
           )}
         </div>
-        <SetupProgress />
         <div className={`p-3 rounded-xl ${colors[color].bg}`}>
           <Icon className={`h-6 w-6 ${colors[color].icon}`} />
         </div>
@@ -423,6 +422,11 @@ export default function Dashboard() {
             trendText={trendExpense ? `${(Math.abs(trendExpense.pct)).toFixed(1).replace('.', ',')}%` : ''}
           />
         </div>
+
+        {/* Progresso de Configuração */}
+        <Motion>
+          <SetupProgress />
+        </Motion>
 
         {/* Últimas Transações */}
         <ModernCard className="p-6">
