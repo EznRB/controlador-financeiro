@@ -1,9 +1,13 @@
 "use client"
 import { motion } from "framer-motion"
-import { Player } from "@lottiefiles/react-lottie-player"
+import dynamic from "next/dynamic"
+import { useState } from "react"
 import { useInViewOnce } from "@/hooks/useInViewOnce"
 
+const LottiePlayer = dynamic(() => import("@lottiefiles/react-lottie-player").then(m => m.Player), { ssr: false })
+
 export default function Hero() {
+  const [lottieError, setLottieError] = useState(false)
   const { ref, seen } = useInViewOnce()
   if (seen) { try { (window as any).plausible?.('lp_section_view', { props: { section: 'hero' } }) } catch {} }
   return (
@@ -21,7 +25,19 @@ export default function Hero() {
         <a href="/checkout?plan=lifetime" className="rounded-xl bg-emerald-600 px-7 py-3 text-white shadow hover:bg-emerald-500 transition-colors">Comprar Vitalício</a>
       </motion.div>
       <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.3 }} className="mx-auto mt-12 max-w-4xl rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/60 backdrop-blur shadow-xl overflow-hidden">
-        <Player autoplay loop src="https://assets5.lottiefiles.com/packages/lf20_jk6c1tlw.json" style={{ height: 240 }} />
+        {!lottieError ? (
+          <LottiePlayer
+            autoplay
+            loop
+            src="https://assets5.lottiefiles.com/packages/lf20_jk6c1tlw.json"
+            style={{ height: 240 }}
+            onEvent={(e: any) => { if (e === 'error' || e?.type === 'error' || e?.name === 'error') setLottieError(true) }}
+          />
+        ) : (
+          <div style={{ height: 240 }} className="flex items-center justify-center bg-white/60 dark:bg-slate-900/60">
+            <img src="/window.svg" alt="Preview" className="h-40 opacity-90" />
+          </div>
+        )}
       </motion.div>
 
       {null}

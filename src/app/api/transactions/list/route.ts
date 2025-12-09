@@ -15,9 +15,15 @@ export async function GET(req: NextRequest) {
   const type = searchParams.get('type') as 'income' | 'expense' | 'all' | null
   const limit = Number(searchParams.get('limit') || 50)
   const period = searchParams.get('period') || 'month'
+  const categoryParam = searchParams.get('category') || ''
+  const categories = categoryParam
+    .split(',')
+    .map((c) => c.trim())
+    .filter((c) => c.length > 0)
 
   const where: any = { userId: user.id }
   if (type && type !== 'all') where.type = type
+  if (categories.length > 0) where.category = { in: categories }
   const now = new Date()
   if (period === 'day') {
     const start = startOfDay(now)
@@ -80,8 +86,29 @@ export async function GET(req: NextRequest) {
   const totalExpense = Number(totalExpenseAgg._sum.amount || 0)
   const totalIncomeVal = Number(totalIncome._sum.amount || 0)
 
+  let totalsByCategory: Array<{ category: string; total_expense: number }> = []
+  try {
+    const group = await prisma.transaction.groupBy({
+      by: ['category'],
+      _sum: { amount: true },
+      where: {
+        userId: user.id,
+        type: 'expense',
+        ...(where.transactionDate ? { transactionDate: where.transactionDate } : {}),
+        ...(categories.length > 0 ? { category: { in: categories } } : {}),
+      },
+    })
+    totalsByCategory = group.map((g: any) => ({
+      category: g.category || 'Outros',
+      total_expense: Math.abs(Number(g._sum.amount || 0)),
+    }))
+  } catch (e) {
+    totalsByCategory = []
+  }
+
   return NextResponse.json({
     transactions,
     totals: { total_income: totalIncomeVal, total_expense: Math.abs(totalExpense), current_balance: totalIncomeVal - Math.abs(totalExpense) },
+    totalsByCategory,
   })
 }

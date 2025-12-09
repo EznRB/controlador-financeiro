@@ -27,6 +27,7 @@ export default function TransactionsPage() {
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState<'all' | 'income' | 'expense'>('all');
   const [period, setPeriod] = useState<'all' | 'month'>('all');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -34,13 +35,14 @@ export default function TransactionsPage() {
     if (status === 'authenticated') {
       fetchTransactions();
     }
-  }, [filterType, period, status]);
+  }, [filterType, period, selectedCategories, status]);
 
   const fetchTransactions = async () => {
     try {
       setLoading(true);
       const typeParam = filterType === 'all' ? '' : `&type=${filterType}`
-      const res = await fetch(`/api/transactions/list?limit=200${typeParam}&period=${period}`)
+      const catParam = selectedCategories.length > 0 ? `&category=${selectedCategories.join(',')}` : ''
+      const res = await fetch(`/api/transactions/list?limit=200${typeParam}&period=${period}${catParam}`)
       const json = await res.json()
       const list: Transaction[] = json.transactions || []
       const unique = Array.from(new Map(list.map(t => [t.id || `${t.type}-${t.amount}-${t.transaction_date}`, t])).values())
@@ -169,6 +171,30 @@ export default function TransactionsPage() {
                 Mês atual
               </button>
             </div>
+          </div>
+        </ModernCard>
+
+        <ModernCard className="p-6">
+          <div className="flex flex-wrap items-center gap-2">
+            {['Comida', 'Investimentos', 'Lazer', 'Transporte', 'Saúde'].map((cat) => (
+              <button
+                key={cat}
+                onClick={() => {
+                  const exists = selectedCategories.includes(cat)
+                  const next = exists
+                    ? selectedCategories.filter((c) => c !== cat)
+                    : [...selectedCategories, cat]
+                  setSelectedCategories(next)
+                }}
+                className={`px-3 py-2 rounded-lg text-sm ${selectedCategories.includes(cat)
+                  ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900'
+                  : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}`}
+              >{cat}</button>
+            ))}
+            <button
+              onClick={() => setSelectedCategories([])}
+              className={`px-3 py-2 rounded-lg text-sm bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300`}
+            >Limpar</button>
           </div>
         </ModernCard>
 

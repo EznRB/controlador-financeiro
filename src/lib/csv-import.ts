@@ -63,43 +63,61 @@ export function parseBrazilianDate(dateStr: string): string {
 
 export function categorizeTransaction(description: string): string {
   const desc = description.toLowerCase()
-  
-  if (desc.includes('nomad')) {
+
+  const is = (patterns: string[]) => patterns.some((p) => desc.includes(p))
+
+  if (is(['nomad', 'brla digital', 'investimento', 'corretora'])) {
     return 'Investimentos'
   }
 
-  if (desc.includes('brla digital')) {
-    return 'Investimentos'
-  }
-
-  if (desc.includes('salário') || desc.includes('pagamento') || desc.includes('renda')) {
+  if (is(['salário', 'pagamento', 'renda'])) {
     return 'Serviço Extra'
   }
-  
-  if (desc.includes('mercado') || desc.includes('supermercado') || desc.includes('alimentação')) {
-    return 'Alimentação'
+
+  if (
+    is([
+      'mercado',
+      'supermercado',
+      'alimentação',
+      'ifood',
+      'padaria',
+      'restaurante',
+      'pizza',
+      'burger',
+      'lanches',
+    ])
+  ) {
+    return 'Comida'
   }
-  
-  if (desc.includes('gasolina') || desc.includes('combustível') || desc.includes('posto')) {
+
+  if (is(['gasolina', 'combustível', 'posto', 'uber', '99', 'estacionamento'])) {
     return 'Transporte'
   }
-  
-  if (desc.includes('cartão') || desc.includes('fatura')) {
+
+  if (is(['cinema', 'netflix', 'spotify', 'disney', 'prime video', 'hbo', 'lazer', 'games'])) {
+    return 'Lazer'
+  }
+
+  if (is(['farmácia', 'consulta', 'exame', 'médico', 'saúde'])) {
+    return 'Saúde'
+  }
+
+  if (is(['cartão', 'fatura'])) {
     return 'Cartão - Internet'
   }
-  
-  if (desc.includes('barbeiro') || desc.includes('corte') || desc.includes('cabelo')) {
+
+  if (is(['barbeiro', 'corte', 'cabelo'])) {
     return 'Corte de Cabelo'
   }
-  
-  if (desc.includes('material') || desc.includes('limpeza') || desc.includes('produto')) {
+
+  if (is(['material', 'limpeza', 'produto'])) {
     return 'Materiais de Limpeza'
   }
-  
-  if (desc.includes('manutenção') || desc.includes('conserto') || desc.includes('ferramenta')) {
+
+  if (is(['manutenção', 'conserto', 'ferramenta'])) {
     return 'Manutenção Equipamentos'
   }
-  
+
   return 'Outros Gastos'
 }
 

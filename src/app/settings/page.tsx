@@ -28,6 +28,7 @@ export default function SettingsPage() {
     monthlyGoal: 2000,
     quickIncomeDefaultAmount: 150,
     quickIncomeDefaultProvider: 'Limpeza Pós-Obra',
+    categoryAliases: [] as Array<{ pattern: string; category: string }>,
   })
   const [savingPrefs, setSavingPrefs] = useState(false)
   const [prefsMessage, setPrefsMessage] = useState('')
@@ -255,11 +256,57 @@ export default function SettingsPage() {
                 <label className="flex items-center gap-2"><input type="checkbox" checked={prefs.reduceMotion} onChange={(e) => setPrefs({ ...prefs, reduceMotion: e.target.checked })} /> Reduzir animações</label>
               </div>
             </div>
-            <div className="mt-4 flex gap-3">
-              <button onClick={savePreferences} disabled={savingPrefs} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50">Salvar preferências</button>
-            </div>
-            {prefsMessage && (<p className="text-sm mt-2 text-slate-600 dark:text-slate-400">{prefsMessage}</p>)}
+          <div className="mt-4 flex gap-3">
+            <button onClick={savePreferences} disabled={savingPrefs} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50">Salvar preferências</button>
           </div>
+          {prefsMessage && (<p className="text-sm mt-2 text-slate-600 dark:text-slate-400">{prefsMessage}</p>)}
+        </div>
+
+        <div>
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Auto-categorização</h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">Defina palavras-chave que determinam a categoria automaticamente durante a importação do CSV.</p>
+          <div className="space-y-3">
+            {(prefs.categoryAliases || []).map((row, idx) => (
+              <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-2 items-center">
+                <input
+                  value={row.pattern}
+                  onChange={(e) => {
+                    const next = [...(prefs.categoryAliases || [])]
+                    next[idx] = { ...next[idx], pattern: e.target.value }
+                    setPrefs({ ...prefs, categoryAliases: next })
+                  }}
+                  placeholder="palavra-chave (ex.: netflix)"
+                  className="px-3 py-2 rounded-lg bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700"
+                />
+                <input
+                  value={row.category}
+                  onChange={(e) => {
+                    const next = [...(prefs.categoryAliases || [])]
+                    next[idx] = { ...next[idx], category: e.target.value }
+                    setPrefs({ ...prefs, categoryAliases: next })
+                  }}
+                  placeholder="categoria (ex.: Lazer)"
+                  className="px-3 py-2 rounded-lg bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700"
+                />
+                <button
+                  onClick={() => {
+                    const next = [...(prefs.categoryAliases || [])]
+                    next.splice(idx, 1)
+                    setPrefs({ ...prefs, categoryAliases: next })
+                  }}
+                  className="px-3 py-2 rounded-lg bg-red-600 text-white"
+                >Remover</button>
+              </div>
+            ))}
+            <button
+              onClick={() => {
+                const next = [...(prefs.categoryAliases || []), { pattern: '', category: '' }]
+                setPrefs({ ...prefs, categoryAliases: next })
+              }}
+              className="px-3 py-2 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white"
+            >Adicionar regra</button>
+          </div>
+        </div>
 
           <div>
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Dados</h2>
@@ -341,6 +388,20 @@ export default function SettingsPage() {
                 className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-900"
               >
                 Excluir TODAS CSV (este ano)
+              </button>
+              <button
+                onClick={async () => {
+                  const ok = window.confirm('Aplicar regras de auto-categorização em transações antigas?')
+                  if (!ok) return
+                  try {
+                    const res = await fetch('/api/tools/recategorize', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) })
+                    const data = await res.json().catch(() => ({}))
+                    alert(res.ok ? `Recategorização concluída: ${data.updated || 0} registros atualizados` : (data.error || 'Falha na recategorização'))
+                  } catch {}
+                }}
+                className="px-4 py-2 bg-indigo-700 text-white rounded-lg hover:bg-indigo-800"
+              >
+                Recategorizar antigas
               </button>
             </div>
           </div>

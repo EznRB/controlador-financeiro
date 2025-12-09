@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { Plus, DollarSign, TrendingUp, TrendingDown, Calendar, Wallet, PiggyBank, CreditCard } from 'lucide-react';
 import Motion from '@/components/Motion'
@@ -114,6 +114,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [period, setPeriod] = useState<'day'|'week'|'month'|'year'|'last7'|'last30'|'custom'>('month')
   const [customStart, setCustomStart] = useState<string>('')
   const [customEnd, setCustomEnd] = useState<string>('')
@@ -123,12 +124,23 @@ export default function Dashboard() {
   const [trendIncome, setTrendIncome] = useState<{ pct: number; dir: 'up'|'down' } | null>(null)
   const [trendExpense, setTrendExpense] = useState<{ pct: number; dir: 'up'|'down' } | null>(null)
   const [trendBalance, setTrendBalance] = useState<{ pct: number; dir: 'up'|'down' } | null>(null)
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [categoryTotals, setCategoryTotals] = useState<Array<{ category: string; total_expense: number }>>([])
 
   useEffect(() => {
     if (status === 'authenticated') {
-      fetchDashboardData(period, customStart, customEnd)
+      // inicializa categorias a partir da querystring
+      const catParam = searchParams?.get('categories') || ''
+      const cats = catParam
+        .split(',')
+        .map((c) => c.trim())
+        .filter((c) => c.length > 0)
+      if (cats.length > 0 && selectedCategories.length === 0) {
+        setSelectedCategories(cats)
+      }
+      fetchDashboardData(period, customStart, customEnd, cats.length > 0 ? cats : selectedCategories)
     }
-  }, [status, period, customStart, customEnd]);
+  }, [status, period, customStart, customEnd, searchParams]);
 
   useEffect(() => {
     const loadPreferences = async () => {
@@ -149,12 +161,15 @@ export default function Dashboard() {
     loadPreferences()
   }, [status])
 
-  const fetchDashboardData = async (p?: string, start?: string, end?: string) => {
+  const fetchDashboardData = async (p?: string, start?: string, end?: string, cats?: string[]) => {
     try {
       setLoading(true);
       const params = new URLSearchParams()
       params.set('period', p || period)
       params.set('limit', '5')
+      params.set('type', 'expense')
+      const effCats = cats && cats.length > 0 ? cats : selectedCategories
+      if (effCats.length > 0) params.set('category', effCats.join(','))
       const effStart = start || customStart
       const effEnd = end || customEnd
       if ((p || period) === 'custom' && effStart && effEnd) {
@@ -165,6 +180,7 @@ export default function Dashboard() {
       const json = await res.json()
       const transactions: Transaction[] = json.transactions || []
       const totals = json.totals || { total_income: 0, total_expense: 0, current_balance: 0 }
+      const totalsByCategory: Array<{ category: string; total_expense: number }> = json.totalsByCategory || []
 
       let prevStart = ''
       let prevEnd = ''
@@ -264,6 +280,7 @@ export default function Dashboard() {
         total_expense: Number(totals.total_expense || 0),
         last_transactions: transactions || []
       });
+      setCategoryTotals(totalsByCategory)
       setTrendIncome(tIncome)
       setTrendExpense(tExpense)
       setTrendBalance(tBalance)
@@ -372,6 +389,81 @@ export default function Dashboard() {
             )}
           </div>
         </ModernCard>
+
+        {/* Filtro de Categoria */}
+        <ModernCard className="p-4">
+          <div className="flex flex-wrap items-center gap-2">
+            {['Comida', 'Investimentos', 'Lazer', 'Transporte', 'Saúde'].map((cat) => (
+              <button
+                key={cat}
+                onClick={() => {
+                  const exists = selectedCategories.includes(cat)
+                  const next = exists
+                    ? selectedCategories.filter((c) => c !== cat)
+                    : [...selectedCategories, cat]
+                  setSelectedCategories(next)
+                  fetchDashboardData(undefined, undefined, undefined, next)
+                }}
+                className={`px-3 py-2 rounded-lg text-sm ${selectedCategories.includes(cat)
+                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900'
+                  : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200'}`}
+              >{cat}</button>
+            ))}
+            <button
+              onClick={() => {
+                setSelectedCategories([])
+                fetchDashboardData(undefined, undefined, undefined, [])
+              }}
+              className={`px-3 py-2 rounded-lg text-sm bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200`}
+            >Limpar</button>
+          </div>
+        </ModernCard>
+
+        {/* Totais por Categoria */}
+        {selectedCategories.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {selectedCategories.map((cat) => {
+              const entry = categoryTotals.find((e) => (e.category || 'Outros') === cat) || { category: cat, total_expense: 0 }
+              return (
+                <StatCard
+                  key={cat}
+                  title={`Gasto em ${cat}`}
+                  value={entry.total_expense}
+                  icon={TrendingDown}
+                  color="red"
+                />
+              )
+            })}
+          </div>
+        )}
+
+        {/* Distribuição por Categoria */}
+        {categoryTotals.length > 0 && (
+          <ModernCard className="p-6">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Distribuição de Despesas por Categoria</h2>
+            {(() => {
+              const total = categoryTotals.reduce((acc, c) => acc + (c.total_expense || 0), 0)
+              return (
+                <div className="space-y-3">
+                  {categoryTotals.map((c) => {
+                    const pct = total > 0 ? ((c.total_expense || 0) / total) * 100 : 0
+                    return (
+                      <div key={c.category} className="space-y-1">
+                        <div className="flex justify-between text-sm text-slate-600 dark:text-slate-300">
+                          <span>{c.category || 'Outros'}</span>
+                          <span>{pct.toFixed(1).replace('.', ',')}%</span>
+                        </div>
+                        <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                          <div className="h-2 bg-red-500/70" style={{ width: `${pct}%` }} />
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )
+            })()}
+          </ModernCard>
+        )}
 
         {/* Ações Rápidas */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

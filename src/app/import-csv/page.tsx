@@ -77,7 +77,7 @@ export default function ImportCSVPage() {
 
       setImportedCount(data.importedCount)
       setSuccess(`Sucesso! ${data.importedCount} transações importadas.`)
-      router.push('/transactions?period=all')
+      router.push('/dashboard?type=expense&period=month&categories=Comida,Investimentos,Lazer')
       if (Array.isArray(data.errors)) {
         setPreviewErrors(data.errors)
       }

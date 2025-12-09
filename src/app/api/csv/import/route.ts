@@ -52,10 +52,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 400 })
     }
 
+    const prefAliases = Array.isArray((userRow as any).preferences?.categoryAliases)
+      ? ((userRow as any).preferences?.categoryAliases as Array<{ pattern: string; category: string }>)
+      : []
+
     const transactionsToInsertRaw = result.transactions.map(tx => {
       const isNomad = /nomad/i.test(tx.description)
       const isBrla = /brla\s*digital/i.test(tx.description)
-      const category = (isNomad || isBrla) ? 'Investimentos' : (tx.category || 'Outros')
+      const baseCategory = tx.category || 'Outros'
+      const descLc = (tx.description || '').toLowerCase()
+      let aliasCategory: string | null = null
+      for (const a of prefAliases) {
+        const pat = (a?.pattern || '').toLowerCase().trim()
+        const cat = String(a?.category || '').trim()
+        if (pat && cat && descLc.includes(pat)) {
+          aliasCategory = cat
+          break
+        }
+      }
+      const category = (isNomad || isBrla) ? 'Investimentos' : (aliasCategory || baseCategory)
       const metadata = (isNomad || isBrla) ? { instrument: 'ETHU', provider: isNomad ? 'Nomad' : 'BRLA Digital' } : {}
       return {
         userId: userRow.id,
